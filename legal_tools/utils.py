@@ -11,7 +11,7 @@ from django.urls import get_resolver
 # First-party/Local
 import legal_tools.models
 from i18n.utils import (
-    get_default_language_for_jurisdiction,
+    get_default_language_for_jurisdiction_naive,
     map_legacy_to_django_language_code,
 )
 from legal_tools.views import render_redirect
@@ -41,7 +41,7 @@ def save_bytes_to_file(filebytes, output_filename):
     if os.path.isfile(dirname):
         os.remove(dirname)
     os.makedirs(dirname, mode=0o755, exist_ok=True)
-    with open(output_filename, "w+b") as f:
+    with open(output_filename, "wb") as f:
         f.write(filebytes)
 
 
@@ -143,17 +143,17 @@ def parse_legal_code_filename(filename):
     if parts:
         language_code = map_legacy_to_django_language_code(parts.pop(0))
     if jurisdiction:
-        language_code = language_code or get_default_language_for_jurisdiction(
-            jurisdiction, ""
+        language_code = (
+            language_code
+            or get_default_language_for_jurisdiction_naive(jurisdiction)
         )
     else:
         language_code = language_code or settings.LANGUAGE_CODE
-    if not language_code:
-        raise ValueError(f"What language? filename={filename}")
+
+    # Valid Django language_codes are extended in settings with the
+    # defaults in:
+    # https://github.com/django/django/blob/main/django/conf/global_settings.py
     if language_code not in settings.LANG_INFO:
-        # Valid Django language_codes are extended in settings with the
-        # defaults in:
-        # https://github.com/django/django/blob/main/django/conf/global_settings.py
         raise ValueError(f"{filename}: Invalid language_code={language_code}")
 
     base_url = compute_base_url(category, unit, version, jurisdiction)
