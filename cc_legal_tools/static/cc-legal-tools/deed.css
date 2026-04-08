@@ -12,6 +12,10 @@
   padding-bottom: 3em;
 } */
 
+.icon-replace.fa-angle-up:before {
+    --icon-sprite: var(--fa-angle-up);
+}
+
 .cc-legal-tools div#deed-body ol > li {
   clear: both;
   list-style: none;
