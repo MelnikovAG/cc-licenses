@@ -1,6 +1,11 @@
 @import "/wp-content/themes/vocabulary-theme/style.css" layer(vocabulary-theme);
 @import "/wp-content/themes/vocabulary-theme/pidgin/css/pidgin.css" layer(vocabulary);
 
+
+body .locale {
+  display: initial;
+}
+
 /* html */
 .bidi-left main ul,
 .bidi-left main ol {
@@ -95,7 +100,6 @@ main > header > span.alt-titles > span.tool-icons > span.cc-icon > svg {
 
 /* right nav */
 .cc-legal-tools main > aside {
-  background-color: var(--vocabulary-brand-color-soft-gold);
   margin-left: 4.1rem;
   padding: 1em;
   height: fit-content;
