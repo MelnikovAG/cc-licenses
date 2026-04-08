@@ -1,4 +1,5 @@
 @import "/wp-content/themes/vocabulary-theme/style.css" layer(vocabulary-theme);
+@import "/wp-content/themes/vocabulary-theme/pidgin/css/pidgin.css" layer(vocabulary);
 
 /* html */
 .bidi-left main ul,
