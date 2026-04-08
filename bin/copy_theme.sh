@@ -47,28 +47,14 @@ THEME_DIR=''
 
 #### FUNCTIONS ################################################################
 
-rsync_vocabulary_theme_files() {
-    print_header 'Rsync necessary files from vocabulary-themes'
-    print_var THEME_DIR
-    print_var REPO_DIR
-    print_var STATIC_DIR | sed -e"s#${REPO_DIR}#${E94}REPO_DIR${E0}#"
-    print_var STATIC_THEME_DIR | sed -e"s#${STATIC_DIR}#${E94}STATIC_DIR${E0}#"
-    # The rsync options below are ordered to match `man rsync`
-    rsync \
-        --recursive \
-        --links \
-        --delete \
-        --delete-excluded \
-        --partial \
-        --prune-empty-dirs \
-        --times \
-        --exclude 'inc/' \
-        --exclude '*.php' \
-        --stats \
-        --human-readable \
-        "${THEME_DIR}/src/" \
-        "${STATIC_THEME_DIR}/"
-    echo
+check_pipenv() {
+    local _msg
+    if ! pipenv --venv --quiet >/dev/null
+    then
+        _msg='The pipenv virtual environment is not avaialable.'
+        _msg="${_msg}\n       First run \`pipenv sync --dev\`."
+        error_exit "${_msg}"
+    fi
 }
 
 create_static_theme_dirs() {
@@ -131,11 +117,47 @@ print_var() {
     print_key_val "${1}" "${!1}"
 }
 
+rsync_vocabulary_theme_files() {
+    print_header 'Rsync necessary files from vocabulary-themes'
+    print_var THEME_DIR
+    print_var REPO_DIR
+    print_var STATIC_DIR | sed -e"s#${REPO_DIR}#${E94}REPO_DIR${E0}#"
+    print_var STATIC_THEME_DIR | sed -e"s#${STATIC_DIR}#${E94}STATIC_DIR${E0}#"
+    # The rsync options below are ordered to match `man rsync`
+    rsync \
+        --recursive \
+        --links \
+        --delete \
+        --delete-excluded \
+        --partial \
+        --prune-empty-dirs \
+        --times \
+        --exclude 'inc/' \
+        --exclude '*.php' \
+        --stats \
+        --human-readable \
+        "${THEME_DIR}/src/" \
+        "${STATIC_THEME_DIR}/"
+    echo
+}
+
+run_pre-commit() {
+    print_header 'Run pre-commit to clean-up files'
+    print_var REPO_DIR
+    print_var STATIC_DIR | sed -e"s#${REPO_DIR}#${E94}REPO_DIR${E0}#"
+    print_var STATIC_THEME_DIR | sed -e"s#${STATIC_DIR}#${E94}STATIC_DIR${E0}#"
+    find "${STATIC_THEME_DIR}" -type f -print0 \
+        | xargs -0 pipenv run pre-commit run --color=always --files || true
+    echo
+}
+
 #### MAIN #####################################################################
 
 cd "${DIR_REPO}"
 
+check_pipenv
 get_vocabulary_theme_dir
 create_static_theme_dirs
 create_wp_content_readme
 rsync_vocabulary_theme_files
+run_pre-commit
