@@ -109,7 +109,6 @@ main > header > span.alt-titles > span.tool-icons > span.cc-icon > svg {
 /* right nav */
 .cc-legal-tools main > aside {
   margin-left: 4.1rem;
-  padding: 1em;
   height: fit-content;
 
   overflow-wrap: break-word;
@@ -126,6 +125,7 @@ main > header > span.alt-titles > span.tool-icons > span.cc-icon > svg {
 main > aside > nav ul > li {
   /* TODO: resolve with vocabulary-theme */
   font-size: 1rem;
+  padding-right: 1em;
 }
 
 /* content */
